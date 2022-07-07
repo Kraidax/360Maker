@@ -1,0 +1,39 @@
+<form #userForm="ngForm">
+	<div>
+		<input type="text" 
+            class="border-2 rounded-md m-2 pl-1"
+			[(ngModel)]="nom"
+			name="nom" 
+			placeholder="Nom du projet">
+        
+        <ng-select 
+            class="m-2"
+            [items]="classe"
+            bindLabel="nom"
+            autofocus
+            bindValue="id_classe"
+            [ngModelOptions]="{standalone: true}" 
+            [(ngModel)]="selected">
+        </ng-select>
+
+
+
+
+		<button mat-raised-button class="m-2" [disabled]="nom === '' || selected === ''"  (click)="onSubmit(userForm)">Ajouter projet</button>
+        <button mat-raised-button class="m-2" (click)="onDelete()">Supprimer projet</button>
+        <button mat-raised-button class="m-2" (click)="onAccess()">Accéder projet</button>
+	</div>
+</form>
+
+<ag-grid-angular
+    style="width:95%; height:61%"
+    class="ag-theme-alpine m-2"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [rowData]="rowData$"
+    [rowSelection]="'single'"
+    [animateRows]="true"
+    [pagination]=true
+    [paginationAutoPageSize]=true
+    (gridReady)="onGridReady($event)">
+</ag-grid-angular>

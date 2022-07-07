@@ -1,0 +1,31 @@
+<form #userPost="ngForm" (ngSubmit)="onSubmit(userPost)">
+    <input type="text" class="border-2 rounded-md m-2 pl-1"  name="nom" placeholder="Nom" [(ngModel)]="nom">
+    <input type="text" class="border-2  rounded-md m-2 pl-1" name="prenom" placeholder="Prenom" [(ngModel)]="prenom">
+    <input type="email" class="border-2  rounded-md m-2 pl-1" name="mail" placeholder="Mail" [(ngModel)]="mail">
+
+<ng-select 
+    class="m-2"
+    [items]="classe"
+    bindLabel="nom"
+    autofocus
+    bindValue="id_classe"
+    [ngModelOptions]="{standalone: true}" 
+    [(ngModel)]="selected">
+</ng-select>
+</form>
+
+<button mat-raised-button class="m-2" [disabled]="nom === ''|| prenom === '' || mail === '' || selected === ''" (click)="onSubmit(userPost)">Ajouter élève</button>
+<button mat-raised-button class="m-2" (click)="onDelete()">Supprimer élève</button>
+
+<ag-grid-angular
+    style="width:95%; height:61%"
+    class="ag-theme-alpine m-2"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [rowData]="rowData$"
+    [rowSelection]="'single'"
+    [animateRows]=true
+    [pagination]=true
+    [paginationAutoPageSize]=true
+    (gridReady)="onGridReady($event)">
+</ag-grid-angular>

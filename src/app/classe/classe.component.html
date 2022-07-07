@@ -1,0 +1,29 @@
+<form #userForm="ngForm">
+	<div>
+		<input type="text" 
+            class="border-2 rounded-md m-2 pl-1"
+			ngModel
+			id="nom"  
+			name="nom" 
+			placeholder="Nom de la classe" 
+			minlength="1" 
+			maxlength="45">
+		<br>
+		<button mat-raised-button class="m-2" type=Submit (click)="onSubmit(userForm)">Ajouter classe</button>
+        <button mat-raised-button class="m-2" type=Submit (click)="onDelete()">Supprimer classe</button>
+
+	</div>
+</form>
+
+<ag-grid-angular
+    style="width:95%; height:60%"
+    class="ag-theme-alpine m-2"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [rowData]="rowData$ | async"
+    [rowSelection]="'single'"
+    [animateRows]="true"
+    [pagination]=true
+    [paginationAutoPageSize]=true
+    (gridReady)="onGridReady($event)">
+</ag-grid-angular>

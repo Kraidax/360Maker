@@ -68,6 +68,7 @@ export class ProjetComponent {
   
           myArray.push(tmp)
         }
+        delay(300)
         this.rowData$ = myArray  
       })
   }
@@ -81,7 +82,7 @@ export class ProjetComponent {
 
     var newItem = [{nom: form.value['nom'], nom_classe:this.classe.find((e: { id_classe: any; }) => e.id_classe == this.selected).nom}]
     api.applyTransaction({ add: newItem });
-    this.http.post('http://localhost:4200/api/newprojet', { "nom": nom, "id_classe": id_classe}, { headers })
+    this.http.post('http://localhost:4200/api/newprojet', { "nom": nom, "id_classe": id_classe}, { headers : {"token" : this.cookie}})
     .subscribe((result)=>{
       console.warn("result" ,result) 
       })
@@ -122,6 +123,14 @@ export class ProjetComponent {
     },
       (error) => {
       console.log('Erreur ! : ' + error);
+    })
+  }
+
+  sendMail(){
+    this.http.get<any>('http://localhost:4200/api/getclasses', { headers : {"token" : this.cookie}})
+    .subscribe(
+      (data) => {
+      alert
     })
   }
 

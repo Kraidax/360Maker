@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Changement du message du mail</h1>
+<div mat-dialog-content>
+  <p>Quel est l'objet du message :</p>
+  <input type="text" class="border-2 rounded-md m-2 pl-1"  name="sujet" placeholder="Objet" [(ngModel)]="data.sujet">
+  <p>Quel est le nouveau message :</p>
+  <textarea [(ngModel)]="data.message" rows="5" cols="100" placeholder="Message"></textarea>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Annuler</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Sauvegarder</button>
+</div>

@@ -58,7 +58,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { GroupeComponent } from './groupe/groupe.component';
+import { DialogContentMail, GroupeComponent } from './groupe/groupe.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { AuthCookie } from './auth-cookies-handler';
 
@@ -71,7 +71,8 @@ import { AuthCookie } from './auth-cookies-handler';
     ClasseComponent,
     ProjetComponent,
     GroupeComponent,
-    SignInComponent
+    SignInComponent,
+    DialogContentMail
   ],
   imports: [
     BrowserModule,

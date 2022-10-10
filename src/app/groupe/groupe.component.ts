@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { AuthCookie } from '../auth-cookies-handler';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface Groupe {
   nom: string;
@@ -25,21 +26,21 @@ export class GroupeComponent {
   public gridColumnApi: any;
 
   projet: any;
-  id : string = this.route.snapshot.params['id_projet'];
-  id_projet = Number(this.id);
+  id_projet : string = this.route.snapshot.params['id_projet'];
   Groupes : Array<Groupe> = [];
   nom : any;
   nom_groupe: any = [];
   cookie: any;
+  nom_groupes: any = [];
 
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private _authCookie: AuthCookie, private router: Router) { }
+  constructor(private http: HttpClient, private route: ActivatedRoute, private _authCookie: AuthCookie, private router: Router,public dialog: MatDialog) { }
 
   public columnDefs: ColDef[] = [
     { field: 'nom', headerName: 'Nom'},
     { field: 'prenom', headerName: 'Prénom'},
-    { field: 'this.groupe.nom', headerName: 'Groupe', editable: true, cellEditor: 'agSelectCellEditor', cellEditorPopup: false, cellEditorParams: { values: this.nom_groupe } }
+    { field: 'this.groupe.nom', headerName: 'Groupe', editable: true, cellEditor: 'agSelectCellEditor', cellEditorPopup: false, cellEditorParams: { values: this.nom_groupes } }
   ];
   
   public defaultColDef: ColDef = {
@@ -60,48 +61,91 @@ export class GroupeComponent {
 
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
-    this.getGroupes();
-    delay(300)
-    console.log("this.Groupes 2 :" ,this.Groupes)
-      this.http.get<any>(`http://localhost:4200/api/getprojet/${this.id_projet}`, { headers : {"token" : this.cookie}})
-      .subscribe(
-        (data) => {
-          this.projet = data;
-          console.log("id_classe :",this.projet.id_classe);
-          this.rowData$ = this.http.get<any>(`http://localhost:4200/api/elvcls/${this.projet.id_classe}`, { headers : {"token" : this.cookie}})
-        },
-        (error) => {
-          console.log('Erreur ! : ' + error);
-        }
-      )
-    
-
-  }
-
-  onSubmit(form: NgForm){
-  var api = this.gridApi!;
-  const nom = form.value['nom']
-  const headers = { 'Content-Type': 'application/json' }
-  console.log("nom :" ,nom)
-  console.log("id_projet :" ,this.id_projet)
-  this.http.post('http://localhost:4200/api/newgroupe', { "nom": nom, "id_projet":this.id_projet }, { headers : {'Content-Type': 'application/json', "token" : this.cookie}})
-    .subscribe((result)=>{
-      console.log("OK") 
-    })
-  }
-
-  getGroupes(){
-      this.http.get<any>('http://localhost:4200/api/getgroupes', { headers : {"token" : this.cookie}})
+    this.http.get<any>('http://localhost:4200/api/getgroupes', { headers : {"token" : this.cookie}})
       .subscribe(
         (data) => {
         this.Groupes = data;
         console.log("this.Groupes :" ,this.Groupes)
-      },
-        (error) => {
-        console.log('Erreur ! : ' + error);
-      }
+        delay(300)
+        this.http.get<any>(`http://localhost:4200/api/getprojet/${this.id_projet}`, { headers : {"token" : this.cookie}})
+        .subscribe(
+        (data) => {
+          this.projet = data;
+          console.log("id_classe :",this.projet.id_classe);
+          delay(300)
+          this.rowData$ = this.http.get<any>(`http://localhost:4200/api/elvcls/${this.projet.id_classe}`, { headers : {"token" : this.cookie}})
+          for(let i=0; i < this.Groupes.length;i++){
+            this.nom_groupes.push(this.Groupes[i].nom)
+          }
+        }
       )
-    }
+    })
+
+  }
+
+  onSubmit(form: NgForm){
+  const nom:string = form.value['nom']
+  console.log("nom :" ,nom)
+  console.log("id_projet :" ,this.id_projet)
+  this.http.post('http://localhost:4200/api/newgroupe', { "nom": nom, "id_projet":this.id_projet }, { headers : {'Content-Type': 'application/json', "token" : this.cookie}})
+    .subscribe(()=>{
+      console.log("OK") 
+    })
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(DialogContentMail);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+      this.http.post('http://localhost:4200/api/modif_body', {"text":result.message}, { headers : {'Content-Type': 'application/json', "token" : this.cookie}})
+      .subscribe(()=>{
+        console.log("body OK") 
+      })
+      this.http.post('http://localhost:4200/api/modif_body', {"text":result.sujet}, { headers : {'Content-Type': 'application/json', "token" : this.cookie}})
+      .subscribe(()=>{
+        console.log("body OK") 
+      })
+
+    });
+
+    
+  }
+
+  onDelete() {
+
+    const selectedData = this.gridApi.getSelectedRows();
+    console.log("selectedData :",selectedData)
+    const res = this.gridApi.applyTransaction({ remove: selectedData })!;
+    const id = selectedData[0].id_groupe;
+    console.log("id :", id)
+     this.http
+       .delete(`http://localhost:4200/api/delgroupe/${id}`, { headers : { "token" : this.cookie}})
+       .subscribe(
+         () => {
+           console.log('Fichier supprimé');
+         },
+         (error) => {
+           console.log('Erreur ! : ' + error);
+         }
+       );
+  }
+
+}
+
+@Component({
+  selector: 'dialog-content-mail',
+  templateUrl: 'dialog-content-mail.html',
+})
+export class DialogContentMail {
+  constructor(
+    public dialogRef: MatDialogRef<DialogContentMail>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+  ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 
 }
 

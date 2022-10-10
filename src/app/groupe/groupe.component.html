@@ -3,6 +3,10 @@
 </form>
 
 <button mat-raised-button class="m-2" [disabled]="nom === ''" (click)="onSubmit(userPost)">Ajouter un groupe</button>
+<button mat-raised-button class="m-2" >Supprimer un groupe</button>
+<button mat-raised-button class="m-2" (click)="openDialog()">Modifier le mail</button>
+<button mat-raised-button class="m-2" >Envoyer le mail</button>
+<button mat-raised-button class="m-2" >Envoyer un rappel</button>
 
 <ag-grid-angular
     style="width:95%; height:61%"

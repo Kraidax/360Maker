@@ -20,7 +20,8 @@
         (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>360Maker</span>
+      <span class="float-right">360Maker</span>
+      <button mat-raised-button class="float-right" (click)="disconnected()">Se déconnecter</button>
     </mat-toolbar>
     <router-outlet></router-outlet>
   </mat-sidenav-content>

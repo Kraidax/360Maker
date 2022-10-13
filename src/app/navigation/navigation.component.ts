@@ -22,6 +22,7 @@ export class NavigationComponent {
 
   disconnected(){
     this._authCookie.deleteAuth()
+    localStorage.removeItem("currentUser")
     this.router.navigate(["/login"]);
   }
 

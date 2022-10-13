@@ -59,15 +59,18 @@ public defaultColDef: ColDef = {
 
 @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 cookie: any;
+token2: any;
 
 constructor(private http: HttpClient, private _authCookie: AuthCookie, private router: Router) {}
 
   ngOnInit (){
 
-    this.cookie = this._authCookie.getAuth()
-    if (!this.cookie) {
+    this.cookie = localStorage.getItem("currentUser")
+    this.token2 = this._authCookie.getAuth()
+    if (!this.cookie || !this.token2) {
       this.router.navigate(["/login"]);
     }
+    console.log("this.cookie :",this.cookie)
   }
 
   async onGridReady(params: GridReadyEvent) {
@@ -76,12 +79,15 @@ constructor(private http: HttpClient, private _authCookie: AuthCookie, private r
   this.gridApi = params.api;
   this.gridColumnApi = params.columnApi;
   
-  console.log("this.classe[0].nom:",this.classe[0].nom)
   this.http.get<any[]>('http://localhost:4200/api/geteleves', { headers : {"token" : this.cookie}})
     .subscribe((result)=>{
       this.data = result
+      console.log("this.data:",this.data)
       var myArray = new Array<eleve>;
       for (let i = 0; i < result.length; i++){
+        console.log("i:",i)
+        console.log("result[i]:",result[i])
+        console.log("result[i].nom:",result[i].nom)
         let tmp : eleve;
         tmp = {"nom":result[i].nom,"prenom":result[i].prenom,"mail":result[i].mail,"id_classe":result[i].id_classe,"id_eleve":result[i].id_eleve,"nom_classe":this.classe.find((e: { id_classe: any; }) => e.id_classe == result[i].id_classe).nom  }
 
@@ -104,9 +110,6 @@ clearSelection(): void {
   this.agGrid.api.deselectAll();
 }
 
-onRemoveSelected() {
-
-}
 onDelete() {
 
   const selectedData = this.gridApi.getSelectedRows();
@@ -136,15 +139,14 @@ onSubmit(form: NgForm){
   const mail = form.value['mail']
   const id_classe = this.selected.toString()
 
-  var newItem = [{nom: form.value['nom'], prenom: form.value['prenom'],mail: form.value['mail'], nom_classe: this.classe.find((e: { id_classe: any; }) => e.id_classe == this.selected).nom}]
-
-  console.log("newItem :",newItem)
-  api.applyTransaction({ add: newItem });
-
   console.log("onsubmit")
 
-  this.http.post('http://localhost:4200/api/neweleve', { "nom": nom, "prenom": prenom, "mail": mail, "id_classe":id_classe }, { headers : {'Content-Type': 'application/json', "token" : this.cookie}})
+  this.http.put('http://localhost:4200/api/neweleve', { "nom": nom, "prenom": prenom, "mail": mail, "id_classe":id_classe }, { headers : {'Content-Type': 'application/json', "token" : this.cookie}})
   .subscribe((result)=>{
+    var newItem = [{nom: form.value['nom'], prenom: form.value['prenom'],mail: form.value['mail'], nom_classe: this.classe.find((e: { id_classe: any; }) => e.id_classe == this.selected).nom}]
+
+    console.log("newItem :",newItem)
+    api.applyTransaction({ add: newItem });
     console.log("OK") 
    }
   )

@@ -6,6 +6,7 @@ import { delay, Observable } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { AuthCookie } from '../auth-cookies-handler';
 import { Router } from '@angular/router';
+import { Token } from '@angular/compiler';
 
 @Component({
   selector: 'app-classe',
@@ -32,15 +33,18 @@ export class ClasseComponent {
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
   classe: any;
   cookie: any;
+  token2: any;
   
   constructor(private http: HttpClient, private _authCookie: AuthCookie, private router: Router) {}
   
   ngOnInit (){
 
-    this.cookie = this._authCookie.getAuth()
-    if (!this.cookie) {
+    this.cookie = localStorage.getItem("currentUser")
+    this.token2 = this._authCookie.getAuth()
+    if (!this.cookie || !this.token2) {
       this.router.navigate(["/login"]);
-  }
+    }
+    console.log("this.cookie :",this.cookie)
   }
 
   onGridReady(params: GridReadyEvent) {
@@ -48,8 +52,7 @@ export class ClasseComponent {
     this.getClasses()
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
-    this.rowData$ = this.http
-      .get<any[]>('http://localhost:4200/api/getclasses', { headers : {"token" : this.cookie}});
+    this.rowData$ = this.http.get<any[]>('http://localhost:4200/api/getclasses', { headers : {"token" : this.cookie}});
   }
 
   getClasses(){
@@ -69,7 +72,7 @@ export class ClasseComponent {
     const nom = form.value['nom']
     var newItem = [{nom: form.value['nom']}]
     api.applyTransaction({ add: newItem });
-    this.http.post('http://localhost:4200/api/newclasse', { "nom": nom }, { headers : {'Content-Type': 'application/json', "token" : this.cookie}})
+    this.http.put('http://localhost:4200/api/newclasse', { "nom": nom }, { headers : {'Content-Type': 'application/json', "token" : this.cookie}})
     .subscribe((result)=>{
       console.warn("result" ,result) 
       })

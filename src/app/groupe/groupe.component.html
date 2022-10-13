@@ -3,20 +3,29 @@
 </form>
 
 <button mat-raised-button class="m-2" [disabled]="nom === ''" (click)="onSubmit(userPost)">Ajouter un groupe</button>
-<button mat-raised-button class="m-2" >Supprimer un groupe</button>
-<button mat-raised-button class="m-2" (click)="openDialog()">Modifier le mail</button>
-<button mat-raised-button class="m-2" >Envoyer le mail</button>
-<button mat-raised-button class="m-2" >Envoyer un rappel</button>
+<button mat-raised-button class="m-2" (click)="onDelete()">Supprimer un groupe</button>
+<button mat-raised-button class="m-2" (click)="openDialog()">Modifier le sujet</button>
+<button mat-raised-button class="m-2" (click)="openDialogMessage()">Modifier le message</button>
+<button mat-raised-button class="m-2" (click)="onSend()">Envoyer le mail</button>
+<button mat-raised-button class="m-2" (click)="onRappel()">Envoyer un rappel</button>
+<button mat-raised-button class="m-2" (click)="onAccess()">Voir les notes</button>
+
+
+<div>
+    <p> voici les groupes disponibles : {{nom_total}}</p>
+</div>
 
 <ag-grid-angular
     style="width:95%; height:61%"
     class="ag-theme-alpine m-2"
     [columnDefs]="columnDefs"
     [defaultColDef]="defaultColDef"
-    [rowData]="rowData$ | async"
+    [rowData]="rowData"
     [rowSelection]="'single'"
     [animateRows]="true"
     [pagination]=true
     [paginationAutoPageSize]=true
+    (cellValueChanged)="onCellValueChanged($event)"
+    (cellEditingStarted)="onCellEditingStarted($event)"
     (gridReady)="onGridReady($event)">
 </ag-grid-angular>

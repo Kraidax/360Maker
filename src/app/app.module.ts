@@ -15,6 +15,7 @@ import { ClasseComponent } from './classe/classe.component';
 import { CommonModule } from '@angular/common';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ProjetComponent } from './projet/projet.component';
+import { NotesComponent } from './notes/notes.component';
 
 
 // Material Form Controls
@@ -58,9 +59,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { DialogContentMail, GroupeComponent } from './groupe/groupe.component';
+import { DialogContentMail, DialogContentMessage, GroupeComponent } from './groupe/groupe.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { AuthCookie } from './auth-cookies-handler';
+
 
 @NgModule({
   declarations: [
@@ -72,7 +74,9 @@ import { AuthCookie } from './auth-cookies-handler';
     ProjetComponent,
     GroupeComponent,
     SignInComponent,
-    DialogContentMail
+    DialogContentMail,
+    DialogContentMessage,
+    NotesComponent
   ],
   imports: [
     BrowserModule,

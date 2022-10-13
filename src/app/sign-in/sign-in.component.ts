@@ -36,21 +36,16 @@ export class SignInComponent{
     console.log('Submit Hash:',Hash);
 
     this.login(Username,Password);
-   
-    
-    
+ 
   }
 
   login(Username: any, Password: any) {
-    
-    this.http.post('http://localhost:4200/api/signin', { "username": Username, "pswd": Password }, {observe: 'response', responseType: 'text', headers : { 'Content-Type': 'application/json' }} )
+    this.http.post('http://localhost:4200/api/signin', { "username": Username, "pswd": Password }, {observe: 'response', responseType: 'text', withCredentials: true}, )
     .subscribe((result)=>{
+      console.log(result)
       this.data = result.body
-      console.log("this.data :", this.data)
-      this._authCookie.setAuth(this.data)
-      console.log("C'est fait")
-      var mon_token = this._authCookie.getAuth()
-      console.log("mon_token :", mon_token)
+      localStorage.setItem('currentUser', this.data);
+      console.log("localtoken :",localStorage.getItem("currentUser"))
       this.router.navigate([""]);
     })
   }

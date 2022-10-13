@@ -40,15 +40,18 @@ export class ProjetComponent {
 
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
   cookie:any;
+  token2: any;
 
   constructor(private http: HttpClient, private router: Router, private _authCookie: AuthCookie) { }
 
   ngOnInit (){
 
-  this.cookie = this._authCookie.getAuth()
-  if (!this.cookie) {
-    this.router.navigate(["/login"]);
-  }
+    this.cookie = localStorage.getItem("currentUser")
+    this.token2 = this._authCookie.getAuth()
+    if (!this.cookie || !this.token2) {
+      this.router.navigate(["/login"]);
+    }
+    console.log("this.cookie :",this.cookie)
   }
 
   async onGridReady(params: GridReadyEvent) {
@@ -82,7 +85,7 @@ export class ProjetComponent {
 
     var newItem = [{nom: form.value['nom'], nom_classe:this.classe.find((e: { id_classe: any; }) => e.id_classe == this.selected).nom}]
     api.applyTransaction({ add: newItem });
-    this.http.post('http://localhost:4200/api/newprojet', { "nom": nom, "id_classe": id_classe}, { headers : {"token" : this.cookie}})
+    this.http.put('http://localhost:4200/api/newprojet', { "nom": nom, "id_classe": id_classe}, { headers : {"token" : this.cookie}})
     .subscribe((result)=>{
       console.warn("result" ,result) 
       })
@@ -126,13 +129,6 @@ export class ProjetComponent {
     })
   }
 
-  sendMail(){
-    this.http.get<any>('http://localhost:4200/api/getclasses', { headers : {"token" : this.cookie}})
-    .subscribe(
-      (data) => {
-      alert
-    })
-  }
 
 }
 

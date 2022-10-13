@@ -6,18 +6,15 @@ export class AuthCookie {
     constructor() { }
 
     getAuth(): string {
-        console.log("getAuth !")
-        console.log("cookie :", Cookie.get('id_token') )
-
-        return Cookie.get('id_token');
+        return Cookie.get('token');
     }
 
     setAuth(value: string): void {
         //0.0138889//this accept day not minuts
-        Cookie.set('id_token', value, 2);
+        Cookie.set('token', value, 2);
     }
 
     deleteAuth(): void {
-        Cookie.delete('id_token');
+        Cookie.delete('token');
     }  
 }
